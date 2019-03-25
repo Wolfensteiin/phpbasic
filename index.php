@@ -1,99 +1,64 @@
-
 <?php
 
-$dbhost = "localhost";
-$dbuser = "root";
-$dbpass = "";
-$dbname = "Registration";
+session_start();
 
-$mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+// Displaying error msg
+
+if (isset($_SESSION['msg_error'])) {
+    
+    echo $_SESSION['msg_error'];
+
+    unset($_SESSION['msg_error']);
+}  
+
+
+
+// Displaying Success msg
+
+if (isset($_SESSION['msg_success'])) {
+    
+    echo $_SESSION['msg_success'];
+
+    unset($_SESSION['msg_success']);
+} 
+
+
+// checking if error happens then store all the errors in variable array
+
+if (isset($_SESSION['errors'])) {
+    
+    $errors = $_SESSION['errors'];
+
+    unset($_SESSION['errors']);
+} 
+
 
 ?>
 
+<!-- form handling -->
 
-<?php
+<form action="process.php" method="POST">
 
-if (isset($_POST['submit'])) {
-    
-    $name     = $_POST['name'];
-    $email    = $_POST['email'];
-    $passport = $_POST['passport'];
-    $contact  = $_POST['contact'];
-    $age      = $_POST['age'];
-    $dob      = $_POST['dob'];
-    $pass     = md5($_POST['pass']);
-    ;
-    $imagename = $_FILES['upload']['name'];
-    $tmpname   = $_FILES['upload']['tmp_name'];
-    $folder    = "images/" . $imagename;
-    move_uploaded_file($tmpname, $folder);
-    
-    //  echo "<img src='$folder' height='100' width='100'>"
-    
-    //   $query = "INSERT INTO table_name (col1, col2, col3, col4, col5)
-    //         VALUES ('{$field1}','{$field2}','{$field3}','{$field4}','{$field5}')";
-    
-    $query = $mysqli = new mysqli("INSERT INTO user_register VALUES ('$name', $email, '$passport', $contact, '$age', '$dob', '$pass', '$folder')");
-    
-    $data = $mysqli->query($query);
-    //$mysqli->close();
-    
-    if ($data) {
-        echo "Data inserted";
-    }
-    
-}
-?>
-
-<html>
-        <header>
-            <h1>Register</h1>
-            <div class="success"></div>
-        </header>
-    <body>
-        <form action="" method="post" enctype="multipart/form-data">
-                <input type="text" name="name" placeholder="Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="text" name="passport" placeholder="Passport" required>
-                <input type="text" name="contact" placeholder="Contact" required>
-                <input type="text" name="age" placeholder="Age" required>
-                <input type="date" size="60" name="dob" placeholder="DOB"/>
-                <input type="password" name="pass" placeholder="Password" required>
-                <input type="file" name="upload" multiple="multiple"> 
-                <input type="submit" name="submit" value="Submit">
-        </form> 
-    </body>
-</html>
-
-
-<?php
-$query = "SELECT * FROM user_register";
-
-if ($result = $mysqli->query($query)) {
-    
-    while ($row = $result->fetch_assoc()) {
+    <div>
+        <input type="text" name="username" placeholder="Enter Username">    
+        <span style="color:red; font-size:14px">
         
-        $name     = $row["name"];
-        $email    = $row["email"];
-        $passport = $row["passport"];
-        $contact  = $row["contact"];
-        $age      = $row["age"];
-        $dob      = $row["dob"];
-        $pass     = $row["pass"];
-        $profpic  = $row["profpic"];
+        <!-- if set then display error -->
+        <?php echo (isset($errors['username_err']) ? $errors['username_err'] : ''); ?>
+
+        </span>
+    </div>
+
+    <div>
+        <input type="password" name="password" placeholder="Enter Password">
+        <span style="color:red; font-size:14px">
+
+            <!-- if set then display error -->
+            <?php echo (isset($errors['password_err']) ? $errors['password_err'] : ''); ?>
+
+        </span>
+    </div>
         
-        echo '<tr> 
-                <td>' . $name . '</td> 
-                <td>' . $email . '</td> 
-                <td>' . $passport . '</td> 
-                <td>' . $contact . '</td> 
-                <td>' . $age . '</td>
-                <td>' . $dob . '</td> 
-                <td>' . $pass . '</td>
-                <td>' . $profpic . '</td>
-            </tr>';
-    }
-    $result->free();
-    
-}
-?>
+        <input type="submit" value="Submit" name="submit">
+
+</form>
